@@ -1,6 +1,6 @@
 # Manage easily AMD EPP Active Driver
 
-This utility lets you easily manage the AMD Energy Performance Profile driver included by default for Zen2+ CPUs in Linux >=6.5 with a commandline simple interface.
+This utility lets you easily manage the AMD Energy Performance Profile driver included by default for Zen2+ CPUs in Linux >=6.5 with a simple commandline interface.
 
 ## Installation
 
