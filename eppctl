@@ -1,0 +1,38 @@
+#!/bin/bash
+
+RED='\033[0;31m'
+NC='\033[0m'
+
+if [[ ! $(cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_driver) = 'amd-pstate-epp' ]]; then
+    echo -e "${RED}amd_pstate_epp CPU driver is not loaded, refusing to run${NC}"
+    exit 1
+fi
+
+epp_profiles=$(cat /sys/devices/system/cpu/cpu0/cpufreq/energy_performance_available_preferences | sed 's, ,\n,g')
+
+case $1 in
+    status)
+        echo "$(cat /sys/devices/system/cpu/cpu*/cpufreq/energy_performance_preference \
+	    | sort -u)"
+    ;;
+    set-profile)
+	power_pref=$2
+	if [[ -z $power_pref ]]; then
+	    echo "Select the power profile to be applied"
+	    echo $epp_profiles
+	    read $power_pref
+	fi
+	if [[ ! $(echo $epp_profiles | grep -w "$power_pref") ]]; then
+	   >&2 echo -e "${RED}Unknown profile selected${NC}"
+	   exit 22
+	fi
+	echo $power_pref | pkexec tee /sys/devices/system/cpu/cpu*/cpufreq/energy_performance_preference
+    ;;
+    get-profiles)
+	echo "${epp_profiles}"
+    ;;
+    *)
+        >&2 echo -e "${RED}Unknown command verb $1${NC}"
+	echo 'Usage is: eppctl (status|set-profile|get-profiles) [profile]'
+    ;;
+esac
