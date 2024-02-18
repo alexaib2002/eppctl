@@ -1,0 +1,13 @@
+[Unit]
+Description=Load Active EPP Profile
+After=default.target
+
+[Service]
+Type=oneshot
+EnvironmentFile=/etc/eppctl.conf
+ExecStart=/usr/local/bin/eppctl set-profile ${DEFAULT_EPP}
+ExecStop=/bin/true
+RemainAfterExit=yes
+
+[Install]
+WantedBy=default.target
